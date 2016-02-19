@@ -1,0 +1,60 @@
+library("MASS")
+library(mlbench)
+randomData <- read.csv("random_housing_data.csv", header = TRUE, fill = TRUE);
+#summary(randomData)
+plot(MEDV~., data = randomData)
+lm.fit = lm(MEDV~., data = randomData)
+
+
+plot(lm.fit)
+summary(lm.fit)
+lm.predict <- predict(lm.fit)
+RMSE <- sqrt(mean((lm.predict-randomData$MEDV)^2))
+plot(randomData$MEDV, col="red", main="Linear regression - Fitted values(blue) and actual values(red) scattered plot over time", cex = 0.3)
+par(new=TRUE)
+plot(lm.predict, col="blue", axes=FALSE, ann=FALSE, cex = 0.3 )
+
+plot(lm.predict-randomData$MEDV, col="red", main="Linear regression - residuals versus fitted values plot", cex = 0.3)
+
+# 10-fold validation
+d <- split(randomData,rep(1:10))
+lm.fit1 = lm(MEDV~., data = rbind(d[[2]], d[[3]], d[[4]], d[[5]], d[[6]], d[[7]], d[[8]], d[[9]], d[[10]]))
+lm.fit2 = lm(MEDV~., data = rbind(d[[1]], d[[3]], d[[4]], d[[5]], d[[6]], d[[7]], d[[8]], d[[9]], d[[10]]))
+lm.fit3 = lm(MEDV~., data = rbind(d[[1]], d[[2]], d[[4]], d[[5]], d[[6]], d[[7]], d[[8]], d[[9]], d[[10]]))
+lm.fit4 = lm(MEDV~., data = rbind(d[[1]], d[[2]], d[[3]], d[[5]], d[[6]], d[[7]], d[[8]], d[[9]], d[[10]]))
+lm.fit5 = lm(MEDV~., data = rbind(d[[1]], d[[2]], d[[3]], d[[4]], d[[6]], d[[7]], d[[8]], d[[9]], d[[10]]))
+lm.fit6 = lm(MEDV~., data = rbind(d[[1]], d[[2]], d[[3]], d[[4]], d[[5]], d[[7]], d[[8]], d[[9]], d[[10]]))
+lm.fit7 = lm(MEDV~., data = rbind(d[[1]], d[[2]], d[[3]], d[[4]], d[[5]], d[[6]], d[[8]], d[[9]], d[[10]]))
+lm.fit8 = lm(MEDV~., data = rbind(d[[1]], d[[2]], d[[3]], d[[4]], d[[5]], d[[6]], d[[7]], d[[9]], d[[10]]))
+lm.fit9 = lm(MEDV~., data = rbind(d[[1]], d[[2]], d[[3]], d[[4]], d[[5]], d[[6]], d[[7]], d[[8]], d[[10]]))
+lm.fit10 = lm(MEDV~., data = rbind(d[[1]], d[[2]], d[[3]], d[[4]], d[[5]], d[[6]], d[[7]], d[[8]], d[[9]]))
+
+#plot(lm.fit)
+#summary(lm.fit)
+#abline(lm.fit, col = 'red')
+
+lm.predict1 <- predict(lm.fit1, d[[1]])
+lm.predict2 <- predict(lm.fit2, d[[2]])
+lm.predict3 <- predict(lm.fit3, d[[3]])
+lm.predict4 <- predict(lm.fit4, d[[4]])
+lm.predict5 <- predict(lm.fit5, d[[5]])
+lm.predict6 <- predict(lm.fit6, d[[6]])
+lm.predict7 <- predict(lm.fit7, d[[7]])
+lm.predict8 <- predict(lm.fit8, d[[8]])
+lm.predict9 <- predict(lm.fit9, d[[9]])
+lm.predict10 <- predict(lm.fit10, d[[10]])
+
+MSE <- vector("numeric", 10)
+MSE[1] <- sqrt(mean((lm.predict1-d[[1]]$MEDV)^2))
+MSE[2] <- sqrt(mean((lm.predict2-randomData$MEDV)^2))
+MSE[3] <- sqrt(mean((lm.predict3-randomData$MEDV)^2))
+MSE[4] <- sqrt(mean((lm.predict4-randomData$MEDV)^2))
+MSE[5] <- sqrt(mean((lm.predict5-randomData$MEDV)^2))
+MSE[6] <- sqrt(mean((lm.predict6-randomData$MEDV)^2))
+MSE[7] <- sqrt(mean((lm.predict7-randomData$MEDV)^2))
+MSE[8] <- sqrt(mean((lm.predict8-randomData$MEDV)^2))
+MSE[9] <- sqrt(mean((lm.predict9-randomData$MEDV)^2))
+MSE[10] <- sqrt(mean((lm.predict10-randomData$MEDV)^2))
+
+MSE
+mean(MSE)
